@@ -1,70 +1,153 @@
-# Getting Started with Create React App
+# Frontend — Student Management System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A **React** single-page application that provides the UI for managing student records. Uses **Redux Toolkit** for global state, **Axios** for API calls, and **Bootstrap 5** for styling.
+
+---
+
+## Tech Stack
+
+- **React 19** — UI library
+- **Redux Toolkit 2** — global state management
+- **React Redux 9** — React bindings for Redux
+- **React Router DOM v7** — client-side routing
+- **Axios** — HTTP client for API calls
+- **Bootstrap 5** + **Bootstrap Icons** — responsive UI and icons
+- **React Toastify** — toast notifications
+
+---
+
+## Project Structure
+
+```
+frontend/src/
+├── App.js                          # Root component with route definitions
+├── index.js                        # React app entry point
+├── components/
+│   ├── Header.jsx                  # Navigation bar with search
+│   ├── Footer.jsx                  # Page footer
+│   ├── StudentInfo.jsx             # Student card/row with edit & delete actions
+│   ├── AddStudent.jsx              # Form for adding a new student
+│   ├── EditStudent.jsx             # Form for editing an existing student
+│   └── SearchingStudentInfo.jsx    # Displays search results
+├── pages/
+│   ├── HomePage.jsx                # Lists all students
+│   ├── AddStudentPage.jsx          # Wraps AddStudent with Header/Footer
+│   ├── EditStudentPage.jsx         # Wraps EditStudent with Header/Footer
+│   └── SearchingStudentPage.jsx    # Wraps search results with Header/Footer
+├── redux/
+│   ├── Store.jsx                   # Redux store configuration
+│   └── StudentSlice.jsx            # Async thunks + reducers for student state
+└── css/
+    ├── Header.css
+    └── Footer.css
+```
+
+---
+
+## Routes
+
+| Path                | Page                  | Description                  |
+|---------------------|-----------------------|------------------------------|
+| `/` or `*`          | HomePage              | View all students            |
+| `/all`              | HomePage              | View all students            |
+| `/add`              | AddStudentPage        | Add a new student            |
+| `/edit/:id`         | EditStudentPage       | Edit an existing student     |
+| `/search/:keyword`  | SearchingStudentPage  | Search results by name       |
+
+---
+
+## Redux State
+
+Managed via `StudentSlice` with the following shape:
+
+```js
+{
+  studentList: [],     // All students loaded from the API
+  loading: false,      // Request in-flight flag
+  error: "",           // Error message if a request fails
+  searchedData: null   // Results from search API call
+}
+```
+
+### Async Thunks
+
+| Thunk                     | Method | Endpoint                          | Description            |
+|---------------------------|--------|-----------------------------------|------------------------|
+| `getAllStudentsApiCall`    | GET    | `/students`                       | Fetch all students     |
+| `addStudentApiCall`       | POST   | `/students`                       | Add a new student      |
+| `updateStudentApical`     | PATCH  | `/students/:id`                   | Update a student       |
+| `deleteStudentApiCal`     | DELETE | `/students/:id`                   | Delete a student       |
+| `searchStudentsApiCall`   | GET    | `/students/search?keyword=...`    | Search by name         |
+
+All thunks display toast notifications on success and failure.
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- Backend API running on `http://localhost:8080`
+
+### Install & Run
+
+```bash
+cd frontend
+npm install
+npm start
+```
+
+The app opens at `http://localhost:3000`.
+
+---
 
 ## Available Scripts
 
-In the project directory, you can run:
+| Script        | Description                          |
+|---------------|--------------------------------------|
+| `npm start`   | Run development server on port 3000  |
+| `npm run build` | Create optimised production build  |
+| `npm test`    | Run test suite                       |
+| `npm run eject` | Eject from Create React App        |
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## API Integration
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+The frontend connects to the backend at:
 
-### `npm test`
+```
+http://localhost:8080
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+If you deploy the backend to a different host or port, update the base URL in `src/redux/StudentSlice.jsx`.
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Pages & Components
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### HomePage
+Fetches and displays all students in a list on mount using `getAllStudentsApiCall`. Each entry shows a `StudentInfo` component with edit and delete buttons.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### AddStudentPage
+Contains the `AddStudent` form. On submission, dispatches `addStudentApiCall` and navigates back to `/all`.
 
-### `npm run eject`
+### EditStudentPage
+Reads the student ID from the URL (`/edit/:id`), pre-populates the `EditStudent` form with existing data, and dispatches `updateStudentApical` on save.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### SearchingStudentPage
+Reads the keyword from the URL (`/search/:keyword`), dispatches `searchStudentsApiCall`, and renders results via `SearchingStudentInfo`.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Header
+Navigation bar with links to Home and Add Student. Includes a search input that navigates to `/search/:keyword` on submit.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Production Build
 
-## Learn More
+```bash
+npm run build
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Outputs a static build to the `build/` folder, which can be served by any static file server or web host.
